@@ -59,7 +59,7 @@ public:
     // cout<<"Tester is ready. Generated "<<N<<" random values\n\n\n";
   }
 
-  int test(function<unsigned int(Type)> hasher){
+  int test(function<unsigned int(Type)> hasher,bool info=false){
     auto iter= hashes.begin();
     timer.start();
     for(const Type& elem: data){
@@ -77,12 +77,19 @@ public:
     int distance=0;
     vector<bool> sections(unique_size+1,false);
     double reference_distance=MAX_HASH/(unique_size+1);
-    for(auto elem: hashes){
+    for (auto i=hashes.begin()  ; i != new_end; i++) {
+      auto elem=*i;
       int section_number=static_cast<int>( elem/reference_distance );
       sections.at(section_number)=true;
     }
     auto filled_sections=count(sections.begin(),sections.end(),true);
     // cout<<"Coverage present="<<static_cast<double>(filled_sections)/(unique_size+1)*100<<"%\n";
+    if (info){
+       cout<<"Work time="<<timer.get()<<" ms"<<endl;
+       cout<<"Collision persent="<<100-(static_cast<double>(unique_size)/N)*100<<"%\n";
+       cout<<"Coverage present="<<static_cast<double>(filled_sections)/(unique_size+1)*100<<"%\n";
+
+    }
     return N-unique_size;
   }
 
@@ -144,18 +151,21 @@ map<int,int> results;
 int colls;
 int N;
 
-
+cout<<"Проведение тестов с колличеством элементов: (максимальное значение 1000000. Запаситесь терпением)\n";
 for (size_t i = 0; i < 1000000; i+=10000) {
   cout<<i<<endl;
   Hash_tester<My_struct,My_struct_Gen> tester(i);
   colls=tester.test(hash_value);
   results.insert(pair<int,int>(i,colls));
 }
-
-
+//эти данные будут использоваться для построения графика.
+cout<<"Количесово коллизий для каждого теста\n";
 for(auto i=results.begin(); i!=results.end();i++){
 cout<<i->second<<endl;
 }
+  //данные о равномерности этой хэш-функции
+  Hash_tester<My_struct,My_struct_Gen> tester2(100000);
+  tester2.test(hash_value,true);
 
 
 

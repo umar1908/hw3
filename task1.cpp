@@ -15,6 +15,9 @@ using namespace std;
 #include <stack>
 #include<chrono>
 #include <list>
+
+
+
 class Timer{ //класс таймаре
 private:
   chrono::time_point<chrono::steady_clock> start_point;
@@ -40,22 +43,8 @@ public:
 
 
 
-// const int N=10;
-// const int N=100;
-// const int N=1000;
-// const int N=10000;
-// const int N=100000;
-const int N=200000;
-// const int N=300000;
-// const int N=400000;
 
-
-// template<int N>
-// struct Arr{
-//   using type=array<int,N>
-// };
-
-template <int N>
+template <int N> //Класс тестировщк N-колличество данных для теста
 class Tester{
 private:
   stack<int> stack1;
@@ -72,8 +61,7 @@ public:
     srand(time(0));
     for (size_t i = 0; i < N; i++) {
       int rand_num=rand();
-      // cout<<rand_num<<endl;
-      stack1.push(rand_num);
+      stack1.push(rand_num); 
       stack2.push(rand_num);
       stack3.push(rand_num);
     }

@@ -78,7 +78,8 @@ public:
     int distance=0;
     vector<bool> sections(unique_size+1,false);
     double reference_distance=MAX_HASH/(unique_size+1);
-    for(auto elem: hashes){
+    for (auto i=hashes.begin()  ; i != new_end; i++) {
+      auto elem=*i;
       int section_number=static_cast<int>( elem/reference_distance );
       sections.at(section_number)=true;
     }
@@ -233,6 +234,8 @@ unsigned int APHash(const char* str, unsigned int length=STR_LENGTH)
    return hash;
 }
 
+
+//Генератор строк
 template<int length>
 class String_Gen{
 private:
@@ -240,7 +243,8 @@ private:
   vector<string*>  pointer_storage;
 public:
   const char* gen(){
-    string* rand_string=new string;
+    string* rand_string=new string; //костыль конечно, но по-другому обеспечить работу
+                                    //с уже написанным тестировщиком не получилось
     pointer_storage.push_back(rand_string);
     for (size_t i = 0; i < length; i++) {
       int rand_num=rand()%26;
@@ -253,7 +257,7 @@ public:
     for(auto elem:pointer_storage){
       delete elem;
     }
-    cout<<"freed!"<<endl;
+    // cout<<"freed!"<<endl;
   }
 
 };
