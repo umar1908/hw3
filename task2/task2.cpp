@@ -17,6 +17,7 @@ using namespace std;
 #include <utility>
 #include <chrono>
 #include <boost/functional/hash.hpp>
+#include <fstream>
 // #include <boost/multi_array.hpp>
 // #include "Fraction.h"
 
@@ -62,8 +63,10 @@ private:
   Generator generator;
   Timer timer;
   vector<size_t> hashes;
+  ofstream out;
 public:
-  Hash_tester (): generator(Generator()), timer(Timer()){
+  Hash_tester (): generator(Generator()), timer(Timer()),out("common_data.txt"){
+    out<<"[";
     data.resize(N);
     hashes.resize(N);
     for (size_t i = 0; i < N; i++) {
@@ -81,6 +84,17 @@ public:
       iter++;
     }
     timer.stop();
+    out<<"[";
+    for(auto elem:hashes){
+      out<<elem<<",";
+    }
+    out<<"],";
+
+
+
+
+
+
     cout<<"Work time="<<timer.get()<<" ms"<<endl;
     sort(hashes.begin(),hashes.end());
     auto new_end =unique(hashes.begin(),hashes.end());
@@ -90,13 +104,17 @@ public:
     int distance=0;
     vector<bool> sections(unique_size+1,false);
     double reference_distance=MAX_HASH/(unique_size+1);
-    for(auto elem: hashes){
+    for (auto i=hashes.begin()  ; i != new_end; i++) {
+      auto elem=*i;
       int section_number=static_cast<int>( elem/reference_distance );
       sections.at(section_number)=true;
     }
     auto filled_sections=count(sections.begin(),sections.end(),true);
     cout<<"Coverage present="<<static_cast<double>(filled_sections)/(unique_size+1)*100<<"%\n";
 
+  }
+  ~Hash_tester(){
+    out<<"]";
   }
 
 };
@@ -124,8 +142,9 @@ public:
 
 
 int main () {
+
   boost::hash<double> boost_hash;
-  Hash_tester <double, Get_double,1000000>tester;
+  Hash_tester <double, Get_double,1000>tester;
   cout<<"boost_hash:\n";
   tester.test(boost_hash);
   cout<<endl<<"hash_with_bad_coverage\n";
@@ -134,6 +153,8 @@ int main () {
   tester.test(hash_with_bad_collision);
   cout<<endl<<"my_hash_double2\n";
   tester.test(my_hash_double2);
+
+
 
 
 }
